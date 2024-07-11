@@ -86,7 +86,6 @@
             textBox_Id.Name = "textBox_Id";
             textBox_Id.Size = new Size(211, 38);
             textBox_Id.TabIndex = 4;
-            textBox_Id.TextChanged += textBox_Id_TextChanged;
             // 
             // textBox_Password
             // 

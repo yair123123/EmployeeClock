@@ -15,12 +15,14 @@ namespace EmployeeClock
     public partial class LoginForm : Form
     {
         internal DBcontext _dbContext;
-        internal DBcontext db = new DBcontext("Data Source=YAIR-ACHRACK;User ID=sa;Password=********;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+        
         internal LoginForm(DBcontext dbcontext)
         {
             InitializeComponent();
             _dbContext = dbcontext;
-            Login();
+            
+
+
         }
 
         private void button_enter_Click(object sender, EventArgs e)
@@ -31,47 +33,41 @@ namespace EmployeeClock
         }
         public void Login()
         {
+            MessageBox.Show(textBox_Id.Text);
 
-            DataTable dt = _dbContext.MakeQuery("select e.employeeID, p.Password from Employees e join Passwords p where @textBox_Id.text = e.employeeID and textBox_Password =  p.Password ");
-             static void printDT(DataTable dt)
+            DataTable dt = _dbContext.MakeQuery("select e.employeeID, p.Password    " +
+                                                "from Employees e " +
+                                               "join Passwords p on e.EmployeeCode = p.EmployeeCode " +
+                                               $"where {int.Parse (textBox_Id.Text)} = e.employeeID"
+                                               );
+
+
+            List<string> results = new List<string>();
+
+            // מעבר על כל שורה בטבלה
+            foreach (DataRow row in dt.Rows)
             {
-                [DllImport("kernel32.dll")]
-                static extern bool AllocConsole();
-                [DllImport("kernel32.dll")]
-                static extern bool FreeConsole();
-                // Call AllocConsole() to create a console window
-                AllocConsole();
-                // Now Console.WriteLine() will output to this console window
-                foreach (DataColumn column in dt.Columns)
-                {
-                    Console.Write($"{column.ColumnName,-20}"); // Adjust the width as needed
-                }
-                Console.WriteLine();
-                // Print data rows
-                foreach (DataRow row in dt.Rows)
-                {
-                    foreach (var item in row.ItemArray)
-                    {
-                        Console.Write($"{item,-20}"); // Adjust the width as needed
-                    }
-                    Console.WriteLine();
-                }
-                Console.ReadLine();
-                // Don't forget to free the console when done
-                FreeConsole();
-            }
-            printDT(dt);
-        }
+                // אחסון הערכים של כל עמודה בשורה במחרוזת אחת
+                string rowString = string.Join(", ", row.ItemArray.Select(item => item.ToString()));
 
+                // הוספת המחרוזת לרשימת התוצאות
+                results.Add(rowString);
+            }
+
+            // הפיכת הרשימה למחרוזת אחת עם שורות נפרדות (אפשר להחליף "\n" בהתאם לפורמט הרצוי)
+            string resultString = string.Join("\n", results);
+
+            // הצגת התוצאה
+            MessageBox.Show(resultString);
+
+        }
 
         private void button_change_password_Click(object sender, EventArgs e)
         {
             FromHandler.ShowFrom("password_Click");
+            Login();
         }
 
-        private void textBox_Id_TextChanged(object sender, EventArgs e)
-        {
 
-        }
     }
 }

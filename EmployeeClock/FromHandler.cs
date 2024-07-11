@@ -18,8 +18,6 @@ namespace EmployeeClock
             {
                 Application.OpenForms[0].Close();
             }
-
-
         }
         public static void ShowFrom(string formName)
         {
